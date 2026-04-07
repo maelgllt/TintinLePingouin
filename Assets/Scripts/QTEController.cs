@@ -10,9 +10,9 @@ public class QTEController : MonoBehaviour
     public bool isHardMode = false;
 
     [Header("UI Elements")]
-    public GameObject qtePanel; // Le panel qui contient le texte
-    public Text keyDisplay;      // Le texte qui affiche la touche (ex: "Appuyez sur Z")
-    public Image timerBar;      // Une barre visuelle qui se vide
+    public GameObject qtePanel; 
+    public Text keyDisplay;      
+    public Image timerBar;      
 
     private string currentKey;
     private bool qteActive = false;
@@ -20,12 +20,15 @@ public class QTEController : MonoBehaviour
 
     void Start()
     {
-        qtePanel.SetActive(false);
         // Ajustement automatique selon le mode
         if (isHardMode) timeToReact = 0.8f; 
+        
+        // C'EST ICI QUE TOUT CHANGE : 
+        // On force le lancement du QTE dès que le jeu commence !
+        StartQTE(); 
     }
 
-    // Appelée par un Trigger au niveau du virage
+    // Appelée par un Trigger au niveau du virage (ou au Start pour tester)
     public void StartQTE()
     {
         if (!qteActive)
@@ -77,7 +80,7 @@ public class QTEController : MonoBehaviour
         // Ici, déclenche l'animation de virage de Tintin
     }
 
-    void Fail()
+    void Fail() 
     {
         Debug.Log("Aïe ! Tintin s'est pris une table.");
         qteActive = false;
