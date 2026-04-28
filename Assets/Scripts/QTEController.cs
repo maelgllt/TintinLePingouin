@@ -5,9 +5,12 @@ using System.Collections.Generic;
 
 public class QTEController : MonoBehaviour
 {
-    [Header("Paramètres de Difficulté")]
-    public float timeToReact = 2.0f; // Temps par défaut (Easy)
-    public bool isHardMode = false;
+    [Header("Difficulty Settings")]
+    public float timeEasy = 2.0f;
+    public float timeMedium = 1.2f;
+    public float timeHard = 0.8f;
+    
+    private float timeToReact;
 
     [Header("UI Elements")]
     public GameObject qtePanel; 
@@ -20,15 +23,23 @@ public class QTEController : MonoBehaviour
 
     void Start()
     {
-        // Ajustement automatique selon le mode
-        if (isHardMode) timeToReact = 0.8f; 
-        
-        // C'EST ICI QUE TOUT CHANGE : 
-        // On force le lancement du QTE dès que le jeu commence !
+        // Apply selected difficulty from the Main Menu
+        switch (GameSettings.CurrentDifficulty)
+        {
+            case GameSettings.Difficulty.Easy:
+                timeToReact = timeEasy;
+                break;
+            case GameSettings.Difficulty.Medium:
+                timeToReact = timeMedium;
+                break;
+            case GameSettings.Difficulty.Hard:
+                timeToReact = timeHard;
+                break;
+        }
+
         StartQTE(); 
     }
 
-    // Appelée par un Trigger au niveau du virage (ou au Start pour tester)
     public void StartQTE()
     {
         if (!qteActive)
@@ -51,14 +62,12 @@ public class QTEController : MonoBehaviour
         {
             timerBar.fillAmount = timeLeft / timeToReact;
             
-            // Vérification de l'input
             if (Input.GetKeyDown(currentKey.ToLower()))
             {
                 Success();
                 yield break;
             }
 
-            // Si le joueur se trompe de touche
             if (Input.anyKeyDown && !Input.GetKeyDown(currentKey.ToLower()))
             {
                 Fail();
@@ -74,17 +83,15 @@ public class QTEController : MonoBehaviour
 
     void Success()
     {
-        Debug.Log("Virage réussi ! Tintin glisse parfaitement.");
+        Debug.Log("Success!");
         qteActive = false;
         qtePanel.SetActive(false);
-        // Ici, déclenche l'animation de virage de Tintin
     }
 
     void Fail() 
     {
-        Debug.Log("Aïe ! Tintin s'est pris une table.");
+        Debug.Log("Fail!");
         qteActive = false;
         qtePanel.SetActive(false);
-        // Ici, appelle la fonction pour retirer un cœur à Tintin
     }
 }
