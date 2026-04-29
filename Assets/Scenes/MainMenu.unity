@@ -1048,6 +1048,7 @@ GameObject:
   - component: {fileID: 1408306220}
   - component: {fileID: 1408306219}
   - component: {fileID: 1408306222}
+  - component: {fileID: 1408306223}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1306,6 +1307,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1493629681}
   m_CullTransparentMesh: 1
+--- !u!114 &1408306223
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1408306218}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa21d712cbc9820488b7aec60379932d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CameraFollow
+  tintin: {fileID: 0}
+  distance: 5
+  hauteur: 3
+  vitesseDeSuivi: 10
 --- !u!1 &1634433547
 GameObject:
   m_ObjectHideFlags: 0
@@ -1839,11 +1856,7 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1639230367}
-  - {fileID: 1294379482}
-  - {fileID: 1493629682}
-  - {fileID: 2086907558}
+  m_Children: [{fileID: 1639230367}, {fileID: 1294379482}, {fileID: 1493629682}, {fileID: 2086907558}]
   m_Father: {fileID: 174550493}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -2033,3 +2046,5 @@ SceneRoots:
   - {fileID: 1061050643}
   - {fileID: 816158236}
   - {fileID: 14939805}
+  - {fileID: 1639230367}
+  - {fileID: 2021951562}
