@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.InputSystem; // ← NOUVEAU
 using System.Collections;
 using System.Collections.Generic;
 
@@ -19,9 +20,9 @@ public class QTEController : MonoBehaviour
 
     private string currentKey;
     private bool qteActive = false;
+
     private List<string> keys = new List<string> { "Z", "Q", "S", "D" };
 
-    // Variables pour mémoriser Tintin et la direction
     private Transform joueurTransform;
     private Vector3 directionDuVirage;
 
@@ -36,10 +37,8 @@ public class QTEController : MonoBehaviour
         qtePanel.SetActive(false);
     }
 
-    // Le Trigger envoie maintenant la direction et le joueur
     public void StartQTE(Vector3 directionSortie, Transform joueur)
     {
-        // On mémorise les infos pour s'en servir en cas de succès !
         directionDuVirage = directionSortie;
         joueurTransform = joueur;
 
@@ -48,6 +47,29 @@ public class QTEController : MonoBehaviour
             StopAllCoroutines();
             StartCoroutine(QTERoutine());
         }
+    }
+
+    // --- New Input System : check de la bonne touche (AZERTY + QWERTY) ---
+    private bool IsCorrectKey(string expectedKey)
+    {
+        var kb = Keyboard.current;
+        if (kb == null) return false;
+
+        switch (expectedKey)
+        {
+            case "Z": return kb.zKey.wasPressedThisFrame || kb.wKey.wasPressedThisFrame;
+            case "Q": return kb.qKey.wasPressedThisFrame || kb.aKey.wasPressedThisFrame;
+            case "S": return kb.sKey.wasPressedThisFrame;
+            case "D": return kb.dKey.wasPressedThisFrame;
+            default:  return false;
+        }
+    }
+
+    // --- New Input System : est-ce qu'une touche quelconque a été pressée ? ---
+    private bool AnyKeyPressed()
+    {
+        var kb = Keyboard.current;
+        return kb != null && kb.anyKey.wasPressedThisFrame;
     }
 
     IEnumerator QTERoutine()
@@ -63,19 +85,16 @@ public class QTEController : MonoBehaviour
         {
             timerBar.fillAmount = timeLeft / timeToReact;
             
-            if (Input.GetKeyDown(currentKey.ToLower()))
+            if (IsCorrectKey(currentKey))
             {
                 Success();
                 yield break;
             }
 
-            if (Input.anyKeyDown && !Input.GetKeyDown(currentKey.ToLower()))
+            if (AnyKeyPressed() && !IsCorrectKey(currentKey))
             {
-                if (!Input.GetMouseButtonDown(0) && !Input.GetMouseButtonDown(1) && !Input.GetMouseButtonDown(2))
-                {
-                    Fail();
-                    yield break;
-                }
+                Fail();
+                yield break;
             }
 
             timeLeft -= Time.deltaTime;
@@ -91,11 +110,8 @@ public class QTEController : MonoBehaviour
         qteActive = false;
         qtePanel.SetActive(false);
 
-        // --- LA MAGIE DU VIRAGE EST ICI ---
         if (joueurTransform != null)
         {
-            // On oriente le "Visage" de Tintin vers la nouvelle route
-            // Le script TintinGlisse s'occupera automatiquement de le faire avancer dans cette nouvelle direction !
             joueurTransform.forward = directionDuVirage;
         }
     }
@@ -105,6 +121,5 @@ public class QTEController : MonoBehaviour
         Debug.Log("Fail! Le pingouin va chuter.");
         qteActive = false;
         qtePanel.SetActive(false);
-        // On ne le tourne pas : punition naturelle, il continue tout droit et tombe dans le vide !
     }
 }
