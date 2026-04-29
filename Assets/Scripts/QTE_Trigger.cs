@@ -4,14 +4,16 @@ public class QTE_Trigger : MonoBehaviour
 {
     [Tooltip("Glisse ici l'objet qui contient le script QTEController")]
     public QTEController qteController;
+    
+    // NOUVEAU : On stocke la direction vers laquelle Tintin doit tourner
+    public Vector3 directionDeSortie; 
 
     private void OnTriggerEnter(Collider other)
     {
-        // On vérifie si c'est bien le pingouin (le joueur) qui entre dans la zone
-        // Assure-toi d'ajouter le Tag "Player" à ton personnage Tintin dans Unity !
         if (other.CompareTag("Player"))
         {
-            qteController.StartQTE();
+            // On envoie le QTE, mais on lui donne aussi la direction et le Transform de Tintin !
+            qteController.StartQTE(directionDeSortie, other.transform);
         }
     }
 }

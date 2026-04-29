@@ -3,22 +3,18 @@ using System.Collections.Generic;
 
 public class MapGenerator : MonoBehaviour
 {
-    [Header("Chemin")]
-    public int totalSegments = 10;
+    [Header("Chemin")] public int totalSegments = 10;
     public float cubeSize = 1f;
     public float pathWidth = 3f;
 
-    [Header("Longueur des segments")]
-    public int minStraight = 5;
+    [Header("Longueur des segments")] public int minStraight = 5;
     public int maxStraight = 15;
 
-    [Header("Pente")]
-    public float slopePerBlock = 0.15f;
+    [Header("Pente")] public float slopePerBlock = 0.15f;
 
     // --- NOUVEAU : Lien vers ton système ---
-    [Header("Système QTE")]
-    [Tooltip("Glisse ici le GameManager qui possède le script QTEController")]
-    public QTEController mainQteController; 
+    [Header("Système QTE")] [Tooltip("Glisse ici le GameManager qui possède le script QTEController")]
+    public QTEController mainQteController;
     // ---------------------------------------
 
     public List<Vector3> pathPoints { get; private set; } = new List<Vector3>();
@@ -31,7 +27,8 @@ public class MapGenerator : MonoBehaviour
 
     void GeneratePath()
     {
-        Vector3[] dirs = {
+        Vector3[] dirs =
+        {
             new Vector3(0, 0, 1),
             new Vector3(1, 0, 0),
             new Vector3(0, 0, -1),
@@ -60,7 +57,8 @@ public class MapGenerator : MonoBehaviour
             Vector3 slopeStart = pos;
             Vector3 slopeEnd = pos + fwd * length * cubeSize;
 
-            meshParts.Add(new CombineInstance {
+            meshParts.Add(new CombineInstance
+            {
                 mesh = CreateQuad(
                     slopeStart - right * halfW + Vector3.up * y,
                     slopeStart + right * halfW + Vector3.up * y,
@@ -86,14 +84,15 @@ public class MapGenerator : MonoBehaviour
             Vector3 newFwd = dirs[newDir];
             Vector3 newRight = new Vector3(newFwd.z, 0, -newFwd.x);
 
-            Vector3 platOrigin = pos; 
+            Vector3 platOrigin = pos;
 
             Vector3 pa = platOrigin - right * halfW + Vector3.up * y;
             Vector3 pb = platOrigin + right * halfW + Vector3.up * y;
             Vector3 pc = platOrigin + fwd * platSize + right * halfW + Vector3.up * y;
             Vector3 pd = platOrigin + fwd * platSize - right * halfW + Vector3.up * y;
 
-            meshParts.Add(new CombineInstance {
+            meshParts.Add(new CombineInstance
+            {
                 mesh = CreateQuad(pa, pb, pc, pd),
                 transform = Matrix4x4.identity
             });
@@ -104,10 +103,10 @@ public class MapGenerator : MonoBehaviour
             pathDirections.Add(newFwd);
 
             // --- NOUVEAU : On place ton déclencheur de QTE pile au centre du virage ! ---
-            // On ne le place pas au dernier segment car il n'y a plus de virage après.
-            if (seg < totalSegments - 1) 
+            if (seg < totalSegments - 1)
             {
-                CreateQTETrigger(platCenter + Vector3.up * y);
+                // On donne la position ET la nouvelle direction (newFwd)
+                CreateQTETrigger(platCenter + Vector3.up * y, newFwd);
             }
             // ----------------------------------------------------------------------------
 
@@ -132,11 +131,12 @@ public class MapGenerator : MonoBehaviour
     {
         Mesh mesh = new Mesh();
         mesh.vertices = new Vector3[] { a, b, c, d };
-        
+
         // LA MAGIE EST ICI : On a inversé l'ordre pour que le sol regarde vers le ciel (0, 2, 1 au lieu de 0, 1, 2)
-        mesh.triangles = new int[] { 0, 2, 1, 0, 3, 2 }; 
-        
-        mesh.normals = new Vector3[] {
+        mesh.triangles = new int[] { 0, 2, 1, 0, 3, 2 };
+
+        mesh.normals = new Vector3[]
+        {
             Vector3.up, Vector3.up, Vector3.up, Vector3.up
         };
         mesh.RecalculateBounds();
@@ -157,7 +157,7 @@ public class MapGenerator : MonoBehaviour
     {
         int batchSize = 100;
         for (int batch = 0; batch < parts.Count; batch += batchSize)
-        { 
+        {
             int count = Mathf.Min(batchSize, parts.Count - batch);
             var subset = new CombineInstance[count];
             for (int i = 0; i < count; i++)
@@ -177,7 +177,8 @@ public class MapGenerator : MonoBehaviour
     }
 
     // --- NOUVEAU : Fonction qui fabrique un trigger QTE de toutes pièces ---
-    void CreateQTETrigger(Vector3 position)
+    // On ajoute "Vector3 nouvelleDirection" entre les parenthèses
+    void CreateQTETrigger(Vector3 position, Vector3 nouvelleDirection)
     {
         if (mainQteController == null)
         {
@@ -185,21 +186,18 @@ public class MapGenerator : MonoBehaviour
             return;
         }
 
-        // On crée un objet vide
         GameObject triggerObj = new GameObject("QTE_Virage_Trigger");
-        
-        // On le place un peu au-dessus du sol pour que Tintin puisse le toucher
-        triggerObj.transform.position = position + new Vector3(0, 1f, 0); 
-        triggerObj.transform.parent = this.transform; // On range ça proprement
+        triggerObj.transform.position = position + new Vector3(0, 1f, 0);
+        triggerObj.transform.parent = this.transform;
 
-        // On lui ajoute un BoxCollider configuré en "Trigger"
         BoxCollider box = triggerObj.AddComponent<BoxCollider>();
         box.isTrigger = true;
-        // On rend la zone de détection de la même taille que la largeur du chemin
-        box.size = new Vector3(pathWidth, 3f, pathWidth); 
+        box.size = new Vector3(pathWidth, 3f, pathWidth);
 
-        // On lui ajoute ton script et on le connecte à ton QTEController !
         QTE_Trigger qteScript = triggerObj.AddComponent<QTE_Trigger>();
         qteScript.qteController = mainQteController;
+
+        // LA NOUVEAUTÉ EST ICI : On donne la direction au script du Trigger !
+        qteScript.directionDeSortie = nouvelleDirection;
     }
 }
