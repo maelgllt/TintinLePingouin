@@ -23,7 +23,7 @@ public class QTEController : MonoBehaviour
 
     void Start()
     {
-        // Apply selected difficulty from the Main Menu
+        // Applique la difficulté choisie dans le Main Menu
         switch (GameSettings.CurrentDifficulty)
         {
             case GameSettings.Difficulty.Easy:
@@ -37,9 +37,11 @@ public class QTEController : MonoBehaviour
                 break;
         }
 
-        StartQTE(); 
+        // On cache le panel au démarrage du jeu
+        qtePanel.SetActive(false);
     }
 
+    // Cette fonction sera appelée par tes objets QTE_Trigger
     public void StartQTE()
     {
         if (!qteActive)
@@ -62,16 +64,22 @@ public class QTEController : MonoBehaviour
         {
             timerBar.fillAmount = timeLeft / timeToReact;
             
+            // Si le joueur appuie sur la BONNE touche
             if (Input.GetKeyDown(currentKey.ToLower()))
             {
                 Success();
                 yield break;
             }
 
+            // Si le joueur appuie sur une MAUVAISE touche
             if (Input.anyKeyDown && !Input.GetKeyDown(currentKey.ToLower()))
             {
-                Fail();
-                yield break;
+                // On ignore les clics de souris pour ne pas perdre par erreur
+                if (!Input.GetMouseButtonDown(0) && !Input.GetMouseButtonDown(1) && !Input.GetMouseButtonDown(2))
+                {
+                    Fail();
+                    yield break;
+                }
             }
 
             timeLeft -= Time.deltaTime;
@@ -83,14 +91,14 @@ public class QTEController : MonoBehaviour
 
     void Success()
     {
-        Debug.Log("Success!");
+        Debug.Log("Success! Le pingouin tourne bien.");
         qteActive = false;
         qtePanel.SetActive(false);
     }
 
     void Fail() 
     {
-        Debug.Log("Fail!");
+        Debug.Log("Fail! Le pingouin percute une table.");
         qteActive = false;
         qtePanel.SetActive(false);
     }
