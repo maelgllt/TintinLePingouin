@@ -7,20 +7,22 @@ using UnityEngine.SceneManagement;
 
 public class QTEController : MonoBehaviour
 {
-
     public GameObject panelDefaite;
 
     [Header("Difficulty Settings")]
     public float timeEasy = 2.0f;
     public float timeMedium = 1.2f;
     public float timeHard = 0.8f;
-    
+
     private float timeToReact;
 
-    [Header("UI Elements")]
-    public GameObject qtePanel; 
-    public Text keyDisplay;      
-    public Image timerBar;      
+    [Header("UI Elements")] public GameObject qtePanel;
+    public Text keyDisplay;
+    public Image timerBar;
+
+    [Header("Audio")] public AudioSource lecteurAudio;
+    public AudioClip sonSucces;
+    public AudioClip sonEchec;
 
     private string currentKey;
     private bool qteActive = false;
@@ -38,6 +40,7 @@ public class QTEController : MonoBehaviour
             case GameSettings.Difficulty.Medium: timeToReact = timeMedium; break;
             case GameSettings.Difficulty.Hard: timeToReact = timeHard; break;
         }
+
         qtePanel.SetActive(false);
     }
 
@@ -64,7 +67,7 @@ public class QTEController : MonoBehaviour
             case "Q": return kb.qKey.wasPressedThisFrame || kb.aKey.wasPressedThisFrame;
             case "S": return kb.sKey.wasPressedThisFrame;
             case "D": return kb.dKey.wasPressedThisFrame;
-            default:  return false;
+            default: return false;
         }
     }
 
@@ -86,7 +89,7 @@ public class QTEController : MonoBehaviour
         while (timeLeft > 0)
         {
             timerBar.fillAmount = timeLeft / timeToReact;
-            
+
             if (IsCorrectKey(currentKey))
             {
                 Success();
@@ -112,27 +115,28 @@ public class QTEController : MonoBehaviour
         qteActive = false;
         qtePanel.SetActive(false);
 
+        if (lecteurAudio != null && sonSucces != null)
+        {
+            lecteurAudio.PlayOneShot(sonSucces);
+        }
+
         if (joueurTransform != null)
         {
             joueurTransform.forward = directionDuVirage;
         }
     }
 
-    void Fail() 
+    void Fail()
     {
         Debug.Log("Fail! Le pingouin va chuter.");
         qteActive = false;
         qtePanel.SetActive(false);
+
+        if (lecteurAudio != null && sonEchec != null)
+        {
+            lecteurAudio.PlayOneShot(sonEchec);
+        }
         panelDefaite.SetActive(true);
         Time.timeScale = 0f;
-    }
-    public void RetourMenu()
-    {
-        
-        Time.timeScale = 1f;
-        
-        SceneManager.LoadScene("MainMenu");
-        panelDefaite.SetActive(false);
-
     }
 }
