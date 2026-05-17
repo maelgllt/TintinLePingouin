@@ -3,9 +3,13 @@ using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 public class QTEController : MonoBehaviour
 {
+
+    public GameObject panelDefaite;
+
     [Header("Difficulty Settings")]
     public float timeEasy = 2.0f;
     public float timeMedium = 1.2f;
@@ -119,5 +123,16 @@ public class QTEController : MonoBehaviour
         Debug.Log("Fail! Le pingouin va chuter.");
         qteActive = false;
         qtePanel.SetActive(false);
+        panelDefaite.SetActive(true);
+        Time.timeScale = 0f;
+    }
+    public void RetourMenu()
+    {
+        
+        Time.timeScale = 1f;
+        
+        SceneManager.LoadScene("MainMenu");
+        panelDefaite.SetActive(false);
+
     }
 }
