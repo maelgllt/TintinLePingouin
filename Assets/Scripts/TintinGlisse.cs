@@ -2,23 +2,30 @@ using UnityEngine;
 
 public class TintinGlisse : MonoBehaviour
 {
-    public float vitesse = 10f;
+    [Header("Vitesse par difficulté")]
+    public float vitesseEasy = 5f;
+    public float vitesseMedium = 8f;
+    public float vitesseHard = 10f;
+
+    private float vitesse;
     private Rigidbody rb;
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+
+        switch (GameSettings.CurrentDifficulty)
+        {
+            case GameSettings.Difficulty.Easy:   vitesse = vitesseEasy;   break;
+            case GameSettings.Difficulty.Medium: vitesse = vitesseMedium; break;
+            case GameSettings.Difficulty.Hard:   vitesse = vitesseHard;   break;
+        }
     }
 
     void FixedUpdate()
     {
-        // On calcule la vitesse vers l'avant
         Vector3 nouvelleVitesse = transform.forward * vitesse;
-        
-        // TRÈS IMPORTANT : On garde la vitesse verticale actuelle (la gravité) !
-        nouvelleVitesse.y = rb.linearVelocity.y; 
-        
-        // On applique cette vitesse au corps physique
+        nouvelleVitesse.y = rb.linearVelocity.y;
         rb.linearVelocity = nouvelleVitesse;
     }
 }

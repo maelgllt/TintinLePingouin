@@ -1,6 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.InputSystem; // ← NOUVEAU
+using UnityEngine.InputSystem;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -49,7 +49,6 @@ public class QTEController : MonoBehaviour
         }
     }
 
-    // --- New Input System : check de la bonne touche (AZERTY + QWERTY) ---
     private bool IsCorrectKey(string expectedKey)
     {
         var kb = Keyboard.current;
@@ -65,7 +64,6 @@ public class QTEController : MonoBehaviour
         }
     }
 
-    // --- New Input System : est-ce qu'une touche quelconque a été pressée ? ---
     private bool AnyKeyPressed()
     {
         var kb = Keyboard.current;

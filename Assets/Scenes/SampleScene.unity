@@ -809,6 +809,60 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1608477781
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1608477783}
+  - component: {fileID: 1608477782}
+  m_Layer: 0
+  m_Name: DecorGenerator
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1608477782
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1608477781}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c83eaf92e794137b095852803a2d746, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DecorGenerator
+  sideFloorWidth: 8
+  sideFloorColor: {r: 0.55, g: 0.35, b: 0.2, a: 1}
+  sideFloorYOffset: -0.05
+  chairPrefab: {fileID: 0}
+  tablePrefab: {fileID: 0}
+  platePrefab: {fileID: 0}
+  cutleryPrefab: {fileID: 0}
+  furnitureSpacing: 2.5
+  furnitureOffsetFromPath: 1.2
+  tableTopHeight: 0.8
+--- !u!4 &1608477783
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1608477781}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 8.47162, y: 0, z: 28.98917}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1731701931
 GameObject:
   m_ObjectHideFlags: 0
@@ -944,7 +998,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa83ecd65cc167d43946a9caf6257fa4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TintinGlisse
-  vitesse: 5
+  vitesseEasy: 5
+  vitesseMedium: 8
+  vitesseHard: 10
 --- !u!54 &1880569081
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1103,6 +1159,7 @@ MonoBehaviour:
   maxStraight: 15
   slopePerBlock: 0.15
   mainQteController: {fileID: 1503398966}
+  decorGenerator: {fileID: 1608477782}
 --- !u!4 &1922793739
 Transform:
   m_ObjectHideFlags: 0
@@ -1130,3 +1187,4 @@ SceneRoots:
   - {fileID: 1547437647}
   - {fileID: 1731701935}
   - {fileID: 1880569085}
+  - {fileID: 1608477783}
