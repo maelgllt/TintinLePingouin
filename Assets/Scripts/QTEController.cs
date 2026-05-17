@@ -3,10 +3,14 @@ using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 public class QTEController : MonoBehaviour
 {
-    [Header("Difficulty Settings")] public float timeEasy = 2.0f;
+    public GameObject panelDefaite;
+
+    [Header("Difficulty Settings")]
+    public float timeEasy = 2.0f;
     public float timeMedium = 1.2f;
     public float timeHard = 0.8f;
 
@@ -132,5 +136,7 @@ public class QTEController : MonoBehaviour
         {
             lecteurAudio.PlayOneShot(sonEchec);
         }
+        panelDefaite.SetActive(true);
+        Time.timeScale = 0f;
     }
 }
