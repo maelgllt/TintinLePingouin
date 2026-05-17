@@ -20,6 +20,10 @@ public class MapGenerator : MonoBehaviour
     [Tooltip("Glisse ici l'objet qui contient le script DecorGenerator (optionnel)")]
     public DecorGenerator decorGenerator;
 
+    [Header("Écran de victoire")]
+    [Tooltip("Glisse ici le Panel_Victoire")]
+    public GameObject panelVictoire;
+
     public List<Vector3> pathPoints { get; private set; } = new List<Vector3>();
     public List<Vector3> pathDirections { get; private set; } = new List<Vector3>();
 
@@ -123,6 +127,8 @@ public class MapGenerator : MonoBehaviour
 
             if (seg < totalSegments - 1)
                 CreateQTETrigger(platCenter + Vector3.up * y, newFwd);
+            else
+                CreateFinishTrigger(platCenter + Vector3.up * y);
 
             pos = platCenter + newFwd * halfW;
             dir = newDir;
@@ -200,4 +206,18 @@ public class MapGenerator : MonoBehaviour
         qteScript.qteController = mainQteController;
         qteScript.directionDeSortie = nouvelleDirection;
     }
+
+    void CreateFinishTrigger(Vector3 position)
+{
+    GameObject finishObj = new GameObject("Ligne_Arrivee");
+    finishObj.transform.position = position + new Vector3(0, 1f, 0);
+    finishObj.transform.parent = this.transform;
+
+    BoxCollider box = finishObj.AddComponent<BoxCollider>();
+    box.isTrigger = true;
+    box.size = new Vector3(pathWidth, 3f, pathWidth);
+
+    LigneArrivee arrivee = finishObj.AddComponent<LigneArrivee>();
+    arrivee.panelVictoire = panelVictoire;
+}
 }
