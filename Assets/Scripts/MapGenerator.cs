@@ -31,7 +31,7 @@ public class MapGenerator : MonoBehaviour
     {
         switch (GameSettings.CurrentDifficulty)
         {
-            case GameSettings.Difficulty.Easy:   totalSegments = 10; break;
+            case GameSettings.Difficulty.Easy:   totalSegments = 2; break;
             case GameSettings.Difficulty.Medium: totalSegments = 15; break;
             case GameSettings.Difficulty.Hard:   totalSegments = 20; break;
         }
@@ -130,6 +130,8 @@ public class MapGenerator : MonoBehaviour
 
         if (seg < totalSegments - 1)
             CreateQTETrigger(platCenter + Vector3.up * y, newFwd);
+        else
+            CreateFinishTrigger(platCenter + Vector3.up * y);
 
         pos = platCenter + newFwd * halfW;
         dir = newDir;
@@ -209,16 +211,16 @@ public class MapGenerator : MonoBehaviour
     }
 
     void CreateFinishTrigger(Vector3 position)
-{
-    GameObject finishObj = new GameObject("Ligne_Arrivee");
-    finishObj.transform.position = position + new Vector3(0, 1f, 0);
-    finishObj.transform.parent = this.transform;
+    {
+        GameObject finishObj = new GameObject("Ligne_Arrivee");
+        finishObj.transform.position = position + new Vector3(0, 1f, 0);
+        finishObj.transform.parent = this.transform;
 
-    BoxCollider box = finishObj.AddComponent<BoxCollider>();
-    box.isTrigger = true;
-    box.size = new Vector3(pathWidth, 3f, pathWidth);
+        BoxCollider box = finishObj.AddComponent<BoxCollider>();
+        box.isTrigger = true;
+        box.size = new Vector3(pathWidth, 3f, pathWidth);
 
-    LigneArrivee arrivee = finishObj.AddComponent<LigneArrivee>();
-    arrivee.panelVictoire = panelVictoire;
-}
+        LigneArrivee arrivee = finishObj.AddComponent<LigneArrivee>();
+        arrivee.panelVictoire = panelVictoire;
+    }
 }
