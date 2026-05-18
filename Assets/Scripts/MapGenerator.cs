@@ -60,79 +60,80 @@ public class MapGenerator : MonoBehaviour
         Material pathMat = CreateMaterial();
 
         for (int seg = 0; seg < totalSegments; seg++)
+    {
+        int length = Random.Range(minStraight, maxStraight + 1);
+        Vector3 fwd = dirs[dir];
+        Vector3 right = new Vector3(fwd.z, 0, -fwd.x);
+
+        // === Décider le virage TOUT DE SUITE pour que le décor le connaisse ===
+        int turn = Random.value < 0.5f ? 1 : 3;
+        int newDir = (dir + turn) % 4;
+        Vector3 newFwd = dirs[newDir];
+
+        // === PENTE ===
+        float yEnd = y - slopePerBlock * length;
+        Vector3 slopeStart = pos;
+        Vector3 slopeEnd = pos + fwd * length * cubeSize;
+
+        meshParts.Add(new CombineInstance
         {
-            int length = Random.Range(minStraight, maxStraight + 1);
-            Vector3 fwd = dirs[dir];
-            Vector3 right = new Vector3(fwd.z, 0, -fwd.x);
+            mesh = CreateQuad(
+                slopeStart - right * halfW + Vector3.up * y,
+                slopeStart + right * halfW + Vector3.up * y,
+                slopeEnd + right * halfW + Vector3.up * yEnd,
+                slopeEnd - right * halfW + Vector3.up * yEnd
+            ),
+            transform = Matrix4x4.identity
+        });
 
-            // === PENTE ===
-            float yEnd = y - slopePerBlock * length;
-            Vector3 slopeStart = pos;
-            Vector3 slopeEnd = pos + fwd * length * cubeSize;
-
-            int turn = Random.value < 0.5f ? 1 : 3;
-            int newDir = (dir + turn) % 4;
-            Vector3 newFwd = dirs[newDir];
-            Vector3 newRight = new Vector3(newFwd.z, 0, -newFwd.x);
-            Vector3 platOrigin = slopeEnd;
-
-            DecorGenerator.CornerEndMiter? endOuterMiter = decorGenerator != null
-                ? DecorGenerator.ComputeEndOuterMiter(platOrigin, fwd, right, newFwd, newRight,
-                    halfW, decorGenerator.sideFloorWidth)
-                : null;
-
-            meshParts.Add(new CombineInstance
-            {
-                mesh = CreateQuad(
-                    slopeStart - right * halfW + Vector3.up * y,
-                    slopeStart + right * halfW + Vector3.up * y,
-                    slopeEnd + right * halfW + Vector3.up * yEnd,
-                    slopeEnd - right * halfW + Vector3.up * yEnd
-                ),
-                transform = Matrix4x4.identity
-            });
-
-            if (decorGenerator != null)
-                decorGenerator.AddSegmentDecor(slopeStart, slopeEnd, right, halfW, y, yEnd, endOuterMiter);
-
-            for (int i = 0; i < length; i++)
-            {
-                float t = (float)i / length;
-                pathPoints.Add(pos + fwd * i * cubeSize + Vector3.up * Mathf.Lerp(y, yEnd, t));
-                pathDirections.Add(fwd);
-            }
-
-            pos = slopeEnd;
-            y = yEnd;
-
-            // === PLATEFORME DE VIRAGE ===
-            Vector3 pa = platOrigin - right * halfW + Vector3.up * y;
-            Vector3 pb = platOrigin + right * halfW + Vector3.up * y;
-            Vector3 pc = platOrigin + fwd * platSize + right * halfW + Vector3.up * y;
-            Vector3 pd = platOrigin + fwd * platSize - right * halfW + Vector3.up * y;
-
-            meshParts.Add(new CombineInstance
-            {
-                mesh = CreateQuad(pa, pb, pc, pd),
-                transform = Matrix4x4.identity
-            });
-
-            // Délégation au DecorGenerator
-            if (decorGenerator != null)
-                decorGenerator.AddCornerDecor(platOrigin, fwd, right, newFwd, halfW, platSize, y);
-
-            Vector3 platCenter = platOrigin + fwd * platSize * 0.5f;
-            pathPoints.Add(platCenter + Vector3.up * y);
-            pathDirections.Add(newFwd);
-
-            if (seg < totalSegments - 1)
-                CreateQTETrigger(platCenter + Vector3.up * y, newFwd);
-            else
-                CreateFinishTrigger(platCenter + Vector3.up * y);
-
-            pos = platCenter + newFwd * halfW;
-            dir = newDir;
+        // On passe newFwd pour que le décor sache où on tourne
+        // (Vector3.zero pour le dernier segment = pas de troncature)
+        if (decorGenerator != null)
+        {
+            Vector3 nextTurnDir = (seg < totalSegments - 1) ? newFwd : Vector3.zero;
+            decorGenerator.AddSegmentDecor(slopeStart, slopeEnd, right, halfW, y, yEnd, nextTurnDir);
         }
+
+        for (int i = 0; i < length; i++)
+        {
+            float t = (float)i / length;
+            pathPoints.Add(pos + fwd * i * cubeSize + Vector3.up * Mathf.Lerp(y, yEnd, t));
+            pathDirections.Add(fwd);
+        }
+
+        pos = slopeEnd;
+        y = yEnd;
+
+        // === PLATEFORME (le turn a déjà été décidé, on enlève juste ces 3 lignes) ===
+        // SUPPRIME : int turn = Random.value < 0.5f ? 1 : 3;
+        // SUPPRIME : int newDir = (dir + turn) % 4;
+        // SUPPRIME : Vector3 newFwd = dirs[newDir];
+
+        Vector3 platOrigin = pos;
+        Vector3 pa = platOrigin - right * halfW + Vector3.up * y;
+        Vector3 pb = platOrigin + right * halfW + Vector3.up * y;
+        Vector3 pc = platOrigin + fwd * platSize + right * halfW + Vector3.up * y;
+        Vector3 pd = platOrigin + fwd * platSize - right * halfW + Vector3.up * y;
+
+        meshParts.Add(new CombineInstance
+        {
+            mesh = CreateQuad(pa, pb, pc, pd),
+            transform = Matrix4x4.identity
+        });
+
+        if (decorGenerator != null)
+            decorGenerator.AddCornerDecor(platOrigin, fwd, right, newFwd, halfW, platSize, y);
+
+        Vector3 platCenter = platOrigin + fwd * platSize * 0.5f;
+        pathPoints.Add(platCenter + Vector3.up * y);
+        pathDirections.Add(newFwd);
+
+        if (seg < totalSegments - 1)
+            CreateQTETrigger(platCenter + Vector3.up * y, newFwd);
+
+        pos = platCenter + newFwd * halfW;
+        dir = newDir;
+    }
 
         BuildFinalMesh(meshParts, pathMat);
 
