@@ -8,4 +8,10 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 1f;
         SceneManager.LoadScene("MainMenu");
     }
+
+    public void LeaveGame()
+    {
+        Debug.Log("Quitter le jeu");
+        Application.Quit();
+    }
 }
