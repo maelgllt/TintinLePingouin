@@ -34,6 +34,10 @@ public class QTEController : MonoBehaviour
 
     private Transform joueurTransform;
     private Vector3 directionDuVirage;
+    private TintinGlisse joueurGlisse;
+    private Rigidbody joueurRb;
+    private Vector3 positionDuVirage;   // <-- ajouter cette ligne
+
 
     void Start()
     {
@@ -47,10 +51,14 @@ public class QTEController : MonoBehaviour
         qtePanel.SetActive(false);
     }
 
-    public void StartQTE(Vector3 directionSortie, Transform joueur)
+    public void StartQTE(Vector3 directionSortie, Vector3 positionVirage, Transform joueur)
     {
         directionDuVirage = directionSortie;
         joueurTransform = joueur;
+        positionDuVirage = positionVirage;
+
+        joueurGlisse = joueur.GetComponent<TintinGlisse>();
+        joueurRb = joueur.GetComponent<Rigidbody>();
 
         if (!qteActive)
         {
@@ -86,6 +94,9 @@ public class QTEController : MonoBehaviour
         currentKey = keys[Random.Range(0, keys.Count)];
         keyDisplay.text = currentKey;
         qtePanel.SetActive(true);
+
+        if (joueurGlisse != null) joueurGlisse.enabled = false;
+        if (joueurRb != null) joueurRb.linearVelocity = Vector3.zero;
 
         float timeLeft = timeToReact;
 
@@ -125,8 +136,15 @@ public class QTEController : MonoBehaviour
 
         if (joueurTransform != null)
         {
+            // Recentre Tintin sur la plateforme en gardant sa hauteur actuelle
+            Vector3 nouvellePos = positionDuVirage;
+            nouvellePos.y = joueurTransform.position.y;
+            joueurTransform.position = nouvellePos;
+
             joueurTransform.forward = directionDuVirage;
         }
+
+        if (joueurGlisse != null) joueurGlisse.enabled = true;
     }
 
     void Fail()
