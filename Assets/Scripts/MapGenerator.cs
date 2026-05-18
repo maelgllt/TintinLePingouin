@@ -23,6 +23,8 @@ public class MapGenerator : MonoBehaviour
     [Header("Écran de victoire")]
     [Tooltip("Glisse ici le Panel_Victoire")]
     public GameObject panelVictoire;
+    
+    public AudioClip musiqueVictoire;
 
     public List<Vector3> pathPoints { get; private set; } = new List<Vector3>();
     public List<Vector3> pathDirections { get; private set; } = new List<Vector3>();
@@ -218,9 +220,14 @@ public class MapGenerator : MonoBehaviour
 
         BoxCollider box = finishObj.AddComponent<BoxCollider>();
         box.isTrigger = true;
-        box.size = new Vector3(pathWidth, 3f, pathWidth);
+        box.size = new Vector3(pathWidth, 5f, pathWidth); // 5f de haut pour être sûr que Tintin la touche
+
+        AudioSource audioSourceFin = finishObj.AddComponent<AudioSource>();
+        audioSourceFin.playOnAwake = false;
 
         LigneArrivee arrivee = finishObj.AddComponent<LigneArrivee>();
         arrivee.panelVictoire = panelVictoire;
+        arrivee.lecteurAudio = audioSourceFin;
+        arrivee.sonVictoire = musiqueVictoire;
     }
 }

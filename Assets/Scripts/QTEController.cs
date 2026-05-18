@@ -16,13 +16,16 @@ public class QTEController : MonoBehaviour
 
     private float timeToReact;
 
-    [Header("UI Elements")] public GameObject qtePanel;
+    [Header("UI Elements")] 
+    public GameObject qtePanel;
     public Text keyDisplay;
     public Image timerBar;
 
-    [Header("Audio")] public AudioSource lecteurAudio;
+    [Header("Audio")] 
+    public AudioSource lecteurAudio;
     public AudioClip sonSucces;
     public AudioClip sonEchec;
+    public AudioClip sonDefaite; // <-- NOUVEAU
 
     private string currentKey;
     private bool qteActive = false;
@@ -132,10 +135,12 @@ public class QTEController : MonoBehaviour
         qteActive = false;
         qtePanel.SetActive(false);
 
-        if (lecteurAudio != null && sonEchec != null)
+        if (lecteurAudio != null)
         {
-            lecteurAudio.PlayOneShot(sonEchec);
+            if (sonEchec != null) lecteurAudio.PlayOneShot(sonEchec); // Bruit d'erreur
+            if (sonDefaite != null) lecteurAudio.PlayOneShot(sonDefaite); // Musique Game Over
         }
+        
         panelDefaite.SetActive(true);
         Time.timeScale = 0f;
     }
