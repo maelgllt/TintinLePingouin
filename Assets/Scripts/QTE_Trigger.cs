@@ -6,12 +6,14 @@ public class QTE_Trigger : MonoBehaviour
     public QTEController qteController;
     
     public Vector3 directionDeSortie; 
+    public Vector3 positionDuVirage;   // <-- nouveau champ
+
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
-            qteController.StartQTE(directionDeSortie, other.transform);
+            qteController.StartQTE(directionDeSortie, positionDuVirage, other.transform);  // 3 arguments
         }
     }
 }

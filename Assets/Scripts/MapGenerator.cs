@@ -210,6 +210,8 @@ public class MapGenerator : MonoBehaviour
         QTE_Trigger qteScript = triggerObj.AddComponent<QTE_Trigger>();
         qteScript.qteController = mainQteController;
         qteScript.directionDeSortie = nouvelleDirection;
+        qteScript.positionDuVirage = position;   // <-- ligne à ajouter
+
     }
 
     void CreateFinishTrigger(Vector3 position)
