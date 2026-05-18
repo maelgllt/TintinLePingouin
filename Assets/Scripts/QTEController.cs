@@ -153,10 +153,16 @@ public class QTEController : MonoBehaviour
         qteActive = false;
         qtePanel.SetActive(false);
 
+        AudioSource musiqueAmbiance = Camera.main.GetComponent<AudioSource>();
+        if (musiqueAmbiance != null)
+        {
+            musiqueAmbiance.Stop();
+        }
+
         if (lecteurAudio != null)
         {
-            if (sonEchec != null) lecteurAudio.PlayOneShot(sonEchec); // Bruit d'erreur
-            if (sonDefaite != null) lecteurAudio.PlayOneShot(sonDefaite); // Musique Game Over
+            if (sonEchec != null) lecteurAudio.PlayOneShot(sonEchec); 
+            if (sonDefaite != null) lecteurAudio.PlayOneShot(sonDefaite); 
         }
         
         panelDefaite.SetActive(true);
