@@ -31,7 +31,7 @@ public class MapGenerator : MonoBehaviour
     {
         switch (GameSettings.CurrentDifficulty)
         {
-            case GameSettings.Difficulty.Easy:   totalSegments = 2; break;
+            case GameSettings.Difficulty.Easy:   totalSegments = 10; break;
             case GameSettings.Difficulty.Medium: totalSegments = 15; break;
             case GameSettings.Difficulty.Hard:   totalSegments = 20; break;
         }
